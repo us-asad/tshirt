@@ -94,14 +94,15 @@ export default function FabricCanvas() {
   // };
 
   useEffect(() => {
-    addTshirtImage();
+    setTimeout(() => {
+      setColor("#000")
+    }, 2000);
   }, []);
 
   useEffect(() => {
     if (svgObj.fill) {
       addTshirtImage(debouncedColor);
     }
-    console.log(svgObj, debouncedColor);
     svgObj.fill = debouncedColor;
   }, [debouncedColor]);
 
