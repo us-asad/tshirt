@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 import React, { useEffect, useState } from "react";
 import { GiCycle } from "react-icons/gi";
 import { VscDebugStepBack } from "react-icons/vsc";
@@ -7,30 +9,36 @@ import { TbTextSize } from "react-icons/tb";
 import TextCard from "../components/TextCard";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+import RadioSelect from "../components/RadioSelect";
 
 export default function Home() {
   const [tab, setTab] = useState("colors");
-  const [tshirtColor, setTShirtColor] = useState(1);
+  const [tshirtColor, setTShirtColor] = useState("white");
   const [texts, setTexts] = useState([]);
   const { selectedObjects, editor, onReady } = useFabricJSEditor();
+  const [gender, setGender] = useState("boy");
+  const [showFront, setShowFront] = useState(true);
+  const [showFolders, setShowFolders] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState(images[0]);
 
-  const handleScaling = (event) => {
-    console.log(event);
+  const handleScaling = (options) => {
+    console.log(options);
   };
 
   const addNewText = (e) => {
     e.preventDefault();
     const textVal = e.target.text?.value;
     if (textVal) {
-      const text = new fabric.Text(textVal, {
+      const text = new fabric.IText(textVal, {
         left: 50,
         top: 50,
-        fontSize: 24,
+        fontSize: 30,
+        fontFamily: "allstars"
       });
 
       editor.canvas?.add(text);
 
-      text.on("scaling", handleScaling);
+      text.on("modified", handleScaling);
 
       setTexts((prev) => [
         { value: textVal, object: text, id: Date.now() },
@@ -41,32 +49,76 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // console.log(fabric.util.loadFont, "fabric");
-    // loadCustomFont("Roboto", () => {});
-    // fabric.util.loadFont("Inconsolata", () => {});
-  }, []);
+    if (!selectedFolder?.genders) setGender("boy");
+    setTShirtColor(selectedFolder.colors[0].label);
+  }, [selectedFolder]);
 
   return (
-    <div className="max-w-[1250px] mx-auto py-16 flex gap-10">
+    <div className="max-w-[1250px] mx-auto py-10 flex gap-10">
       <div className="w-1/3">
-        <button className="flex items-center gap-2 px-4 py-2 hover:bg-[#d1d1d179] duration-200 rounded-md hover:text-blue-600">
-          <GiCycle />
-          <span>Change T-Shirt</span>
-        </button>
-        <div className="border border-gray-400 py-4 mt-3 relative">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setShowFolders((prev) => !prev)}
+            className={`flex items-center gap-2 px-4 py-2 hover:bg-[#d1d1d179] duration-200 rounded-md hover:text-blue-600 ${
+              showFolders && "bg-[#d1d1d179] text-blue-600"
+            }`}
+          >
+            <GiCycle
+              className={`duration-200 ${showFolders ? "rotate-[180deg]" : ""}`}
+            />
+            <span>{showFolders ? "Close" : "Change T-Shirt"}</span>
+          </button>
+          {selectedFolder?.genders && (
+            <RadioSelect
+              value={gender}
+              setValue={setGender}
+              options={[
+                { label: "Man", value: "boy" },
+                { label: "Woman", value: "girl" },
+              ]}
+            />
+          )}
+        </div>
+        {showFolders && (
+          <div className="flex items-center gap-2 mt-3">
+            {images?.map((img) => (
+              <button
+                onClick={() => setSelectedFolder(img)}
+                key={img.folder}
+                className={`duration-100 border-2 p-1 ${
+                  img.folder === selectedFolder.folder && "border-blue-600"
+                }`}
+              >
+                <img
+                  src={`/tshirt/${img.folder}/boy-white.png`}
+                  alt="T-Shirt"
+                  className="w-[80px] h-[80px]"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="mt-3 relative">
           <img
-            src={`./tshirt/1/${tshirtColor}.png`}
+            src={`./tshirt/${selectedFolder.folder}/${gender}-${tshirtColor}${
+              !showFront ? "-back" : ""
+            }.png`}
             alt="T-Shirt"
-            className="w-full h-[400px] object-contain"
+            className="w-full object-contain"
           />
           <FabricJSCanvas
             className="main-canvas absolute top-[70px] left-[120px] w-[171px] h-[310px]"
             onReady={onReady}
           />
         </div>
-        <button className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200">
-          <VscDebugStepBack className="text-xl" />
-          <span>Back Side</span>
+        <button
+          onClick={() => setShowFront((prev) => !prev)}
+          className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200"
+        >
+          <VscDebugStepBack
+            className={`text-xl duration-200 ${showFront && "rotate-[180deg]"}`}
+          />
+          <span>{showFront ? "Back Side" : "Front Side"}</span>
         </button>
         <button className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200">
           <BiCloudDownload className="text-2xl" />
@@ -102,14 +154,14 @@ export default function Home() {
                   <div>
                     <h3 className="font-medium">T-Shirt</h3>
                     <div className="flex gap-2 mt-3">
-                      {tshirtColors.map((color, idx) => (
+                      {selectedFolder?.colors?.map((color, idx) => (
                         <button
-                          key={color}
-                          onClick={() => setTShirtColor(idx + 1)}
+                          key={color.value}
+                          onClick={() => setTShirtColor(color.label)}
                           className={`w-12 h-7 border border-black duration-150 ${
-                            tshirtColor === idx + 1 && "scale-[1.2]"
+                            tshirtColor === color.label && "scale-[1.2]"
                           }`}
-                          style={{ backgroundColor: color }}
+                          style={{ backgroundColor: color.value }}
                         ></button>
                       ))}
                     </div>
@@ -150,6 +202,7 @@ export default function Home() {
                               onChange={(value) =>
                                 setTexts((prev) => {
                                   const updatedTexts = [...prev];
+                                  updatedTexts[idx].object.text = value;
                                   updatedTexts[idx].value = value;
                                   return updatedTexts;
                                 })
@@ -183,12 +236,49 @@ export default function Home() {
 }
 
 const tshirtColors = [
-  "#38385c",
-  "#009176",
-  "#ede6e8",
-  "#ffa905",
-  "#005993",
-  "#933900",
+  { label: "white", value: "#fff" },
+  { label: "black", value: "#000" },
+  { label: "gray", value: "#c1c6d6" },
+  { label: "sky", value: "#81ccd7" },
+  { label: "yellow", value: "#ffad00" },
+  { label: "pink", value: "#ff8268" },
+  { label: "green", value: "#003936" },
+  { label: "red", value: "#560007" },
+];
+
+const images = [
+  {
+    folder: "1",
+    colors: [
+      { label: "white", value: "#fff" },
+      { label: "black", value: "#000" },
+      { label: "gray", value: "#c1c6d6" },
+      { label: "sky", value: "#81ccd7" },
+      { label: "yellow", value: "#ffad00" },
+      { label: "pink", value: "#ff8268" },
+      { label: "green", value: "#003936" },
+      { label: "red", value: "#560007" },
+    ],
+    genders: [
+      { label: "Man", value: "boy" },
+      { label: "Woman", value: "girl" },
+    ],
+  },
+  {
+    folder: "2",
+    colors: [
+      { label: "white", value: "#fff" },
+      { label: "black", value: "#000" },
+    ],
+  },
+  {
+    folder: "3",
+    colors: [
+      { label: "white", value: "#fff" },
+      { label: "black", value: "#000" },
+      { label: "gray", value: "#c1c6d6" },
+    ],
+  },
 ];
 
 // import { useState } from "react";

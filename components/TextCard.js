@@ -37,7 +37,7 @@ export default function TextCard({
         fontFamily: font,
         fontWeight: weight,
       });
-      console.log(object.fontFamily)
+      console.log(object.fontFamily);
 
       if (editor?.canvas?.renderAll) editor.canvas.renderAll();
     }
@@ -49,7 +49,7 @@ export default function TextCard({
         fontWeight: weight,
         fontFamily: font,
       });
-      console.log(object.fontWeight)
+      console.log(object.fontWeight);
 
       if (editor?.canvas?.renderAll) editor.canvas.renderAll();
     }
@@ -60,7 +60,7 @@ export default function TextCard({
       <div className="flex items-center justify-between gap-5">
         <input
           type="text"
-          value={value}
+          value={object.text}
           onChange={(e) => onChange(e.target.value)}
           className={`border border-gray-300 rounded-md px-2.5 py-0.5 w-full font-semibold font-${font}`}
           style={{ color }}
@@ -87,12 +87,12 @@ export default function TextCard({
               onChange={(e) => setColor(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <h4 className="font-medium text-sm w-[50px]">Weight</h4>
             <select
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="border border-gray-300 rounded-md px-2.5 py-0.5 text-sm"
+              className="border border-gray-300 rounded-md px-2.5 py-0.5 text-sm w-full"
             >
               <option className="font-[100]" value={100}>
                 Thin
@@ -123,7 +123,7 @@ export default function TextCard({
                 Black
               </option>
             </select>
-          </div>
+          </div> */}
           <div className="flex items-center gap-3">
             <h4 className="font-medium text-sm w-[50px]">Font</h4>
             <select
@@ -131,12 +131,11 @@ export default function TextCard({
               onChange={(e) => setFont(e.target.value)}
               className="border border-gray-300 rounded-md px-2.5 py-0.5 text-sm"
             >
-              <option value="roboto" className="font-roboto">
-                Roboto
-              </option>
-              <option value="inconsolata" className="font-inconsolata">
-                Inconsolata
-              </option>
+              {fonts.map((font) => (
+                <option key={font} value={font} className={`font-${font}`}>
+                  {font}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -144,3 +143,25 @@ export default function TextCard({
     </div>
   );
 }
+
+const fonts = [
+  "allstars",
+  "amore",
+  "andes",
+  "arabic",
+  "arbat",
+  "bnt",
+  "captureit",
+  "copyist",
+  "corsiva",
+  "disney",
+  "ds-goose",
+  "europebold",
+  "flowerchild",
+  "lobster",
+  "mistral",
+  "rain",
+  "rubik",
+  "supernatural",
+  "superstar",
+];

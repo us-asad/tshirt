@@ -18,152 +18,173 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* FONTS */
-
 @font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 100;
-  src: url(/fonts/Roboto-Thin.ttf);
+  font-family: allstars;
+  src: url(/fonts/allstars.ttf);
 }
 
-@font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 100;
-  src: url(/fonts/Roboto-ThinItalic.ttf);
+.font-allstars {
+  font-family: allstars;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 300;
-  src: url(/fonts/Roboto-Light.ttf);
+  font-family: amore;
+  src: url(/fonts/amore.ttf);
+}
+
+.font-amore {
+  font-family: amore;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 300;
-  src: url(/fonts/Roboto-LightItalic.ttf);
+  font-family: andes;
+  src: url(/fonts/andes.ttf);
+}
+
+.font-andes {
+  font-family: andes;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  src: url(/fonts/Roboto-Regular.ttf);
+  font-family: arabic;
+  src: url(/fonts/arabic.ttf);
+}
+
+.font-arabic {
+  font-family: arabic;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 400;
-  src: url(/fonts/Roboto-RegularItalic.ttf);
+  font-family: arbat;
+  src: url(/fonts/arbat.ttf);
+}
+
+.font-arbat {
+  font-family: arbat;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 500;
-  src: url(/fonts/Roboto-Medium.ttf);
+  font-family: bnt;
+  src: url(/fonts/bnt.ttf);
+}
+
+.font-bnt {
+  font-family: bnt;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 500;
-  src: url(/fonts/Roboto-MediumItalic.ttf);
+  font-family: captureit;
+  src: url(/fonts/captureit.ttf);
+}
+
+.font-captureit {
+  font-family: captureit;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 700;
-  src: url(/fonts/Roboto-Bold.ttf);
+  font-family: copyist;
+  src: url(/fonts/copyist.ttf);
+}
+
+.font-copyist {
+  font-family: copyist;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 700;
-  src: url(/fonts/Roboto-BoldItalic.ttf);
+  font-family: corsiva;
+  src: url(/fonts/corsiva.ttf);
+}
+
+.font-corsiva {
+  font-family: corsiva;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 900;
-  src: url(/fonts/Roboto-Black.ttf);
+  font-family: disney;
+  src: url(/fonts/disney.ttf);
+}
+
+.font-disney {
+  font-family: disney;
 }
 
 @font-face {
-  font-family: "Roboto";
-  font-style: italic;
-  font-weight: 900;
-  src: url(/fonts/Roboto-BlackItalic.ttf);
+  font-family: ds-goose;
+  src: url(/fonts/ds-goose.ttf);
 }
 
-.font-roboto {
-  font-family: "Roboto", sans-serif;
-}
-
-@font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 200;
-  src: url(/fonts/Inconsolata-ExtraLight.ttf);
+.font-ds-goose {
+  font-family: ds-goose;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 300;
-  src: url(/fonts/Inconsolata-Light.ttf);
+  font-family: europebold;
+  src: url(/fonts/europebold.ttf);
+}
+
+.font-europebold {
+  font-family: europebold;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 400;
-  src: url(/fonts/Inconsolata-Regular.ttf);
+  font-family: flowerchild;
+  src: url(/fonts/flowerchild.ttf);
+}
+
+.font-flowerchild {
+  font-family: flowerchild;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 500;
-  src: url(/fonts/Inconsolata-Medium.ttf);
+  font-family: lobster;
+  src: url(/fonts/lobster.ttf);
+}
+
+.font-lobster {
+  font-family: lobster;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 600;
-  src: url(/fonts/Inconsolata-SemiBold.ttf);
+  font-family: mistral;
+  src: url(/fonts/mistral.ttf);
+}
+
+.font-mistral {
+  font-family: mistral;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 700;
-  src: url(/fonts/Inconsolata-Bold.ttf);
+  font-family: rain;
+  src: url(/fonts/rain.ttf);
+}
+
+.font-rain {
+  font-family: rain;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 800;
-  src: url(/fonts/Inconsolata-ExtraBold.ttf);
+  font-family: rubik;
+  src: url(/fonts/rubik.ttf);
+}
+
+.font-rubik {
+  font-family: rubik;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  font-style: normal;
-  font-weight: 900;
-  src: url(/fonts/Inconsolata-Black.ttf);
+  font-family: supernatural;
+  src: url(/fonts/supernatural.ttf);
 }
 
-.font-inconsolata {
-  font-family: "Inconsolata", monospace;
+.font-supernatural {
+  font-family: supernatural;
+}
+
+@font-face {
+  font-family: superstar;
+  src: url(/fonts/superstar.ttf);
+}
+
+.font-superstar {
+  font-family: superstar;
 }
