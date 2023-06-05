@@ -81,22 +81,35 @@ export default function FabricCanvas() {
     });
   };
 
-  // const downloadCanvas = () => {
-  //   const href = editor?.canvas?.toDataURL({
-  //     format: "png",
-  //     quality: 1,
-  //   });
-  //   console.log(href, "href");
-  //   const aEl = document.createElement("a");
-  //   aEl.href = href;
-  //   aEl.download = "tshirt.png";
-  //   aEl.click();
-  // };
+  console.log(editor?.canvas, "editor?.canvas");
+
+  const downloadCanvas = () => {
+    const mergedCanvas = document.createElement("canvas");
+    const context = mergedCanvas.getContext("2d");
+
+    mergedCanvas.width = editor?.canvas?.width;
+    mergedCanvas.height = editor?.canvas?.height + editor2?.canvas?.height;
+
+    context.drawImage(editor?.canvas?.cacheCanvasEl, 0, 0);
+    context.drawImage(
+      editor2?.canvas?.cacheCanvasEl,
+      0,
+      editor?.canvas.height?.cacheCanvasEl
+    );
+
+    const href = mergedCanvas.toDataURL("image/png");
+
+    console.log(href, "href");
+    const aEl = document.createElement("a");
+    aEl.href = href;
+    aEl.download = "tshirt.png";
+    aEl.click();
+  };
 
   useEffect(() => {
     setTimeout(() => {
-      setColor("#000")
-    }, 2000);
+      setColor("#000");
+    }, 100);
   }, []);
 
   useEffect(() => {
@@ -155,14 +168,23 @@ export default function FabricCanvas() {
               </div>
             ))}
           </div>
-          {/* <button
+          <button
             onClick={downloadCanvas}
             className="mt-10 w-full py-2 px-6 bg-blue-600 text-white rounded-md hover:opacity-80 duration-200"
           >
             Download
-          </button> */}
+          </button>
         </div>
       </div>
     </div>
   );
 }
+/*
+Upload Image
+change font
+change text-colors
+add bg for texts
+
+
+
+*/
