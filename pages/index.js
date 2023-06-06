@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GiCycle } from "react-icons/gi";
 import { VscDebugStepBack } from "react-icons/vsc";
 import { BiCloudDownload } from "react-icons/bi";
@@ -10,6 +10,7 @@ import TextCard from "../components/TextCard";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import RadioSelect from "../components/RadioSelect";
+import html2canvas from "html2canvas";
 
 export default function Home() {
   const [tab, setTab] = useState("colors");
@@ -20,9 +21,18 @@ export default function Home() {
   const [showFront, setShowFront] = useState(true);
   const [showFolders, setShowFolders] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState(images[0]);
+  const elementRef = useRef(null);
 
-  const handleScaling = (options) => {
-    console.log(options);
+  const captureScreenshot = () => {
+    html2canvas(elementRef.current)
+      .then(canvas => {
+        const imgData = canvas.toDataURL();
+
+        const aEl = document.createElement("a");
+        aEl.href = imgData;
+        aEl.download = "tshirt.png";
+        aEl.click();
+      });
   };
 
   const addNewText = (e) => {
@@ -37,8 +47,6 @@ export default function Home() {
       });
 
       editor.canvas?.add(text);
-
-      text.on("modified", handleScaling);
 
       setTexts((prev) => [
         { value: textVal, object: text, id: Date.now() },
@@ -98,7 +106,7 @@ export default function Home() {
             ))}
           </div>
         )}
-        <div className="mt-3 relative">
+        <div ref={elementRef} className="mt-3 relative">
           <img
             src={`./tshirt/${selectedFolder.folder}/${gender}-${tshirtColor}${
               !showFront ? "-back" : ""
@@ -120,7 +128,7 @@ export default function Home() {
           />
           <span>{showFront ? "Back Side" : "Front Side"}</span>
         </button>
-        <button className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200">
+        <button onClick={captureScreenshot} className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200">
           <BiCloudDownload className="text-2xl" />
           <span>Download</span>
         </button>
