@@ -21,18 +21,24 @@ export default function Home() {
   const [showFront, setShowFront] = useState(true);
   const [showFolders, setShowFolders] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState(images[0]);
+  const [selectedObject, setSelectedObject] = useState(null);
   const elementRef = useRef(null);
 
   const captureScreenshot = () => {
-    html2canvas(elementRef.current)
-      .then(canvas => {
-        const imgData = canvas.toDataURL();
+    if (selectedObject) {
+      editor?.canvas?.discardActiveObject();
+      selectedObject.setCoords();
+      editor?.canvas?.renderAll();
+      setSelectedObject(null);
+    }
+    html2canvas(elementRef.current).then((canvas) => {
+      const imgData = canvas.toDataURL();
 
-        const aEl = document.createElement("a");
-        aEl.href = imgData;
-        aEl.download = "tshirt.png";
-        aEl.click();
-      });
+      const aEl = document.createElement("a");
+      aEl.href = imgData;
+      aEl.download = "tshirt.png";
+      aEl.click();
+    });
   };
 
   const addNewText = (e) => {
@@ -43,7 +49,7 @@ export default function Home() {
         left: 50,
         top: 50,
         fontSize: 30,
-        fontFamily: "allstars"
+        fontFamily: "allstars",
       });
 
       editor.canvas?.add(text);
@@ -60,6 +66,19 @@ export default function Home() {
     if (!selectedFolder?.genders) setGender("boy");
     setTShirtColor(selectedFolder.colors[0].label);
   }, [selectedFolder]);
+
+  useEffect(() => {
+    editor?.canvas?.on("object:selected", (event) => {
+      console.log(event, "event");
+      // selectedObject = event.target;
+    });
+  }, [editor]);
+
+  useEffect(() => {
+    const activeObj = editor?.canvas?.getActiveObject();
+    if (activeObj) setSelectedObject(activeObj);
+    else setSelectedObject(null);
+  }, [editor]);
 
   return (
     <div className="max-w-[1250px] mx-auto py-10 flex gap-10">
@@ -128,7 +147,10 @@ export default function Home() {
           />
           <span>{showFront ? "Back Side" : "Front Side"}</span>
         </button>
-        <button onClick={captureScreenshot} className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200">
+        <button
+          onClick={captureScreenshot}
+          className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200"
+        >
           <BiCloudDownload className="text-2xl" />
           <span>Download</span>
         </button>
