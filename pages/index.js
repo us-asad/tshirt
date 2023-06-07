@@ -81,9 +81,9 @@ export default function Home() {
   }, [editor]);
 
   return (
-    <div className="max-w-[1250px] mx-auto py-10 flex gap-10">
-      <div className="w-1/3">
-        <div className="flex items-center justify-between">
+    <div className="py-10 flex gap-10 justify-center md:items-start items-center md:flex-row flex-col">
+      <div className="w-full md:w-[400px]">
+        <div className="px-5 md:px-0 flex sm:items-center justify-between sm:flex-row flex-col">
           <button
             onClick={() => setShowFolders((prev) => !prev)}
             className={`flex items-center gap-2 px-4 py-2 hover:bg-[#d1d1d179] duration-200 rounded-md hover:text-blue-600 ${
@@ -95,19 +95,21 @@ export default function Home() {
             />
             <span>{showFolders ? "Close" : "Change T-Shirt"}</span>
           </button>
-          {selectedFolder?.genders && (
-            <RadioSelect
-              value={gender}
-              setValue={setGender}
-              options={[
-                { label: "Man", value: "boy" },
-                { label: "Woman", value: "girl" },
-              ]}
-            />
-          )}
+          <div className="sm:ml-0 ml-auto">
+            {selectedFolder?.genders && (
+              <RadioSelect
+                value={gender}
+                setValue={setGender}
+                options={[
+                  { label: "Man", value: "boy" },
+                  { label: "Woman", value: "girl" },
+                ]}
+              />
+            )}
+          </div>
         </div>
         {showFolders && (
-          <div className="flex items-center gap-2 mt-3">
+          <div className="px-5 md:px-0 flex items-center gap-2 mt-3">
             {images?.map((img) => (
               <button
                 onClick={() => setSelectedFolder(img)}
@@ -131,31 +133,35 @@ export default function Home() {
               !showFront ? "-back" : ""
             }.png`}
             alt="T-Shirt"
-            className="w-full object-contain"
+            className="w-[300px] sm:w-[500px] mx-auto md:w-full object-contain"
           />
           <FabricJSCanvas
-            className="main-canvas absolute top-[70px] left-[120px] w-[171px] h-[310px]"
+            className="main-canvas absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[123px] h-[216px] sm:w-[181px] sm:h-[386px] md:w-[171px] md:h-[310px]"
             onReady={onReady}
           />
         </div>
-        <button
-          onClick={() => setShowFront((prev) => !prev)}
-          className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200"
-        >
-          <VscDebugStepBack
-            className={`text-xl duration-200 ${showFront && "rotate-[180deg]"}`}
-          />
-          <span>{showFront ? "Back Side" : "Front Side"}</span>
-        </button>
-        <button
-          onClick={captureScreenshot}
-          className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200"
-        >
-          <BiCloudDownload className="text-2xl" />
-          <span>Download</span>
-        </button>
+        <div className="px-5 md:px-0">
+          <button
+            onClick={() => setShowFront((prev) => !prev)}
+            className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200"
+          >
+            <VscDebugStepBack
+              className={`text-xl duration-200 ${
+                showFront && "rotate-[180deg]"
+              }`}
+            />
+            <span>{showFront ? "Back Side" : "Front Side"}</span>
+          </button>
+          <button
+            onClick={captureScreenshot}
+            className="flex items-center gap-2 justify-center w-full py-2.5 text-lg bg-blue-600 text-white rounded-md mt-3 hover:bg-blue-500 duration-200"
+          >
+            <BiCloudDownload className="text-2xl" />
+            <span>Download</span>
+          </button>
+        </div>
       </div>
-      <div className="w-2/3">
+      <div className="px-5 md:px-0 w-full md:w-[350px]">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setTab("colors")}
@@ -215,7 +221,7 @@ export default function Home() {
                         name="text"
                         className="px-3 py-1.5 text-sm rounded-tl-md rounded-bl-md border border-gray-400 border-r-0 w-full"
                       />
-                      <button className="px-5 py-1.5 text-sm font-medium rounded-tr-md rounded-br-md bg-blue-500 text-white">
+                      <button className="px-5 md:px-0 py-1.5 text-sm font-medium rounded-tr-md rounded-br-md bg-blue-500 text-white">
                         Add
                       </button>
                     </form>
