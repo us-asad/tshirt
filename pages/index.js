@@ -158,7 +158,7 @@ export default function Home() {
       return updatedTexts;
     });
     editor?.canvas?.remove(object);
-  }
+  };
 
   useEffect(() => {
     if (!selectedFolder?.genders) setGender("boy");
@@ -393,16 +393,19 @@ export default function Home() {
                     <>
                       <div className="flex justify-end">
                         <FontIconPicker
-                          opened
                           onChange={addNewIcon}
-                          {...fontIconProps}
+                          icons={icons.map((icon) => `fa-solid fa-${icon}`)}
+                          theme="bluegrey"
+                          renderUsing="class"
                         />
                       </div>
                       {icons.map((icon, idx) => (
                         <IconCard
                           key={icon.id}
                           editor={editor}
-                          remove={() => removeIcon({ index: idx, object: icon.object })}
+                          remove={() =>
+                            removeIcon({ index: idx, object: icon.object })
+                          }
                           {...icon}
                         />
                       ))}
@@ -452,10 +455,3 @@ const images = [
     ],
   },
 ];
-
-const fontIconProps = {
-  icons: icons.map((icon) => `fa-solid fa-${icon}`),
-  theme: "bluegrey",
-  renderUsing: "class",
-  isMulti: false,
-};
