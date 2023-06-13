@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable jsx-a11y/alt-text */
 import React, { useEffect, useRef, useState } from "react";
 import { GiCycle } from "react-icons/gi";
 import { VscDebugStepBack } from "react-icons/vsc";
@@ -13,32 +12,44 @@ import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import RadioSelect from "../components/RadioSelect";
 import html2canvas from "html2canvas";
 import ZoomableImg from "../components/ZoomableImg";
+import { BsEmojiSmileUpsideDown } from "react-icons/bs";
+import dynamic from "next/dynamic";
+import icons from "../utils/icons";
+import IconCard from "../components/IconCard";
+
+const FontIconPicker = dynamic(
+  () => import("@fonticonpicker/react-fonticonpicker"),
+  { ssr: false }
+);
 
 export default function Home() {
   const [tab, setTab] = useState("colors");
   const [tshirtColor, setTShirtColor] = useState("white");
   const [texts, setTexts] = useState([]);
-  const { selectedObjects, editor, onReady } = useFabricJSEditor();
+  const { editor, onReady } = useFabricJSEditor();
   const [gender, setGender] = useState("boy");
   const [showFront, setShowFront] = useState(true);
   const [showFolders, setShowFolders] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState(images[0]);
   const [selectedObject, setSelectedObject] = useState(null);
   const elementRef = useRef(null);
-  const [zoomMode, setZoomMode] = useState(false);
+  const [zoomImg, setZoomImg] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [icons, setIcons] = useState([]);
 
-  const renderZoomImage = (zoomStateChange) => {
-    if (zoomStateChange && zoomMode) {
+  const renderZoomImage = (zoomStateChange, force) => {
+    if (zoomStateChange && zoomImg) {
       return setTimeout(() => {
         html2canvas(elementRef.current).then((canvas) => {
-          setZoomMode(canvas.toDataURL());
+          setZoomImg(canvas.toDataURL());
         });
       }, 10);
     }
 
-    html2canvas(elementRef.current).then((canvas) => {
-      setZoomMode(canvas.toDataURL());
-    });
+    if (force)
+      html2canvas(elementRef.current).then((canvas) => {
+        setZoomImg(canvas.toDataURL());
+      });
   };
 
   const captureScreenshot = () => {
@@ -80,6 +91,30 @@ export default function Home() {
     }
   };
 
+  const addNewIcon = (iconClassName) => {
+    if (!iconClassName) return;
+
+    const content = document.querySelector(
+      "." + iconClassName.replaceAll(" ", ".")
+    );
+    const styles = window.getComputedStyle(content, "::before");
+
+    const icon = new fabric.IText(styles.content.replaceAll('"', ""), {
+      fontFamily: "Font Awesome 6 Free",
+      fontWeight: 900,
+      fontSize: 20,
+      fill: "red",
+    });
+
+    editor.canvas.add(icon);
+
+    setIcons((prev) => [
+      { className: iconClassName, object: icon, id: Date.now() },
+      ...prev,
+    ]);
+    renderZoomImage(true);
+  };
+
   const changeMode = () => {
     if (selectedObject) {
       editor?.canvas?.discardActiveObject();
@@ -88,15 +123,41 @@ export default function Home() {
       setSelectedObject(null);
     }
 
-    const isZoomMode = !zoomMode;
-    if (isZoomMode) {
-      renderZoomImage();
-    } else setZoomMode("");
+    if (!zoomImg) {
+      renderZoomImage(false, true);
+    } else setZoomImg("");
   };
 
   const changeTShirtColor = (color) => {
     setTShirtColor(color.label);
     renderZoomImage(true);
+  };
+
+  const removeText = ({ object, index }) => {
+    setTexts((prev) => {
+      const updatedTexts = [...prev];
+      updatedTexts.splice(index, 1);
+      return updatedTexts;
+    });
+    editor?.canvas?.remove(object);
+  };
+
+  const changeText = ({ value, index }) => {
+    setTexts((prev) => {
+      const updatedTexts = [...prev];
+      updatedTexts[index].object.text = value;
+      updatedTexts[index].value = value;
+      return updatedTexts;
+    });
+  };
+
+  const removeIcon = ({ index, object }) => {
+    setIcons((prev) => {
+      const updatedTexts = [...prev];
+      updatedTexts.splice(index, 1);
+      return updatedTexts;
+    });
+    editor?.canvas?.remove(object);
   }
 
   useEffect(() => {
@@ -106,15 +167,20 @@ export default function Home() {
   }, [selectedFolder]);
 
   useEffect(() => {
-    editor?.canvas?.on("object:selected", (event) => {
-      console.log(event, "event");
-      // selectedObject = event.target;
-    });
-
     const activeObj = editor?.canvas?.getActiveObject();
     if (activeObj) setSelectedObject(activeObj);
     else setSelectedObject(null);
   }, [editor]);
+
+  useEffect(() => {
+    renderZoomImage(true);
+  }, [showFront]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 6000);
+  }, []);
 
   return (
     <div className="py-10 flex gap-10 justify-center md:items-start items-center md:flex-row flex-col">
@@ -164,9 +230,11 @@ export default function Home() {
           </div>
         )}
         <div className="mt-3">
-          {zoomMode ? <ZoomableImg src={zoomMode} /> : null}
+          {zoomImg ? <ZoomableImg src={zoomImg} /> : null}
 
-          <div className={zoomMode ? "absolute opacity-0 pointer-events-none" : ""}>
+          <div
+            className={zoomImg ? "absolute opacity-0 pointer-events-none" : ""}
+          >
             <div ref={elementRef} className="relative">
               <img
                 src={`./tshirt/${
@@ -187,7 +255,7 @@ export default function Home() {
             onClick={changeMode}
             className="flex items-center w-max ml-auto gap-2 mt-3 px-2.5 py-1.5 hover:bg-blue-100 rounded-md duration-200 hover:text-blue-500"
           >
-            {!zoomMode ? (
+            {!zoomImg ? (
               <>
                 <AiOutlineZoomIn />
                 <span>Zoom Mode</span>
@@ -239,6 +307,15 @@ export default function Home() {
             <TbTextSize className="text-lg" />
             <span>Texts</span>
           </button>
+          <button
+            onClick={() => setTab("icons")}
+            className={`flex items-center justify-center gap-3 px-3 py-2 border-b-2 border-transparent hover:border-b-blue-600 duration-200 hover:text-blue-600 ${
+              tab === "icons" && "border-b-blue-600 text-blue-600"
+            }`}
+          >
+            <BsEmojiSmileUpsideDown className="text-lg" />
+            <span>Icons</span>
+          </button>
         </div>
         <div className="my-3 mx-4 max-w-[350px]">
           {
@@ -259,12 +336,6 @@ export default function Home() {
                         ></button>
                       ))}
                     </div>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Texts</h3>
-                    <span className="text-gray-400 mt-3 block">
-                      No Any Texts
-                    </span>
                   </div>
                 </div>
               ),
@@ -294,22 +365,17 @@ export default function Home() {
                               editor={editor}
                               key={text.id}
                               onChange={(value) =>
-                                setTexts((prev) => {
-                                  const updatedTexts = [...prev];
-                                  updatedTexts[idx].object.text = value;
-                                  updatedTexts[idx].value = value;
-                                  return updatedTexts;
+                                changeText({
+                                  value,
+                                  index: idx,
                                 })
                               }
-                              remove={() => {
-                                setTexts((prev) => {
-                                  const updatedTexts = [...prev];
-                                  updatedTexts.splice(idx, 1);
-                                  return updatedTexts;
-                                });
-                                if (editor?.canvas?.remove)
-                                  editor.canvas?.remove(text.object);
-                              }}
+                              remove={() =>
+                                removeText({
+                                  object: value.object,
+                                  index: idx,
+                                })
+                              }
                               {...text}
                             />
                           ))}
@@ -321,6 +387,29 @@ export default function Home() {
                   </div>
                 </div>
               ),
+              icons: (
+                <div className="flex flex-col gap-6">
+                  {!loading && (
+                    <>
+                      <div className="flex justify-end">
+                        <FontIconPicker
+                          opened
+                          onChange={addNewIcon}
+                          {...fontIconProps}
+                        />
+                      </div>
+                      {icons.map((icon, idx) => (
+                        <IconCard
+                          key={icon.id}
+                          editor={editor}
+                          remove={() => removeIcon({ index: idx, object: icon.object })}
+                          {...icon}
+                        />
+                      ))}
+                    </>
+                  )}
+                </div>
+              ),
             }[tab]
           }
         </div>
@@ -328,17 +417,6 @@ export default function Home() {
     </div>
   );
 }
-
-const tshirtColors = [
-  { label: "white", value: "#fff" },
-  { label: "black", value: "#000" },
-  { label: "gray", value: "#c1c6d6" },
-  { label: "sky", value: "#81ccd7" },
-  { label: "yellow", value: "#ffad00" },
-  { label: "pink", value: "#ff8268" },
-  { label: "green", value: "#003936" },
-  { label: "red", value: "#560007" },
-];
 
 const images = [
   {
@@ -375,13 +453,9 @@ const images = [
   },
 ];
 
-// import { useState } from "react";
-// import FabricCanvas from "../components/FabricCanvas";
-
-// export default function Home() {
-//   return (
-//     <div>
-//       <FabricCanvas />
-//     </div>
-//   );
-// }
+const fontIconProps = {
+  icons: icons.map((icon) => `fa-solid fa-${icon}`),
+  theme: "bluegrey",
+  renderUsing: "class",
+  isMulti: false,
+};

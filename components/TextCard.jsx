@@ -1,28 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsFillTrashFill } from "react-icons/bs";
 import { MdClose, MdSettings } from "react-icons/md";
 import { useDebounce } from "use-debounce";
 
 export default function TextCard({
-  value = "",
   onChange = Function.prototype,
   remove = Function.prototype,
-  object = {},
-  editor = null,
+  object,
+  editor,
 }) {
   const [showSettings, setShowSettings] = useState(false);
   const [color, setColor] = useState("#000");
-  const [weight, setWeight] = useState(600);
   const [font, setFont] = useState("inconsolata");
   const [deboucedColor] = useDebounce(color, 1000);
   const [deboucedFont] = useDebounce(font, 1000);
-  const [deboucedWeight] = useDebounce(weight, 1000);
 
   useEffect(() => {
-    console.log(object);
-    if (object.set) {
+    if (object) {
       object.set({
         fill: deboucedColor,
       });
@@ -32,28 +27,15 @@ export default function TextCard({
   }, [deboucedColor]);
 
   useEffect(() => {
-    if (object.set) {
+    if (object) {
       object.set({
         fontFamily: font,
-        fontWeight: weight,
+        fontWeight: 600,
       });
-      console.log(object.fontFamily);
 
       if (editor?.canvas?.renderAll) editor.canvas.renderAll();
     }
   }, [deboucedFont]);
-
-  useEffect(() => {
-    if (object.set) {
-      object.set({
-        fontWeight: weight,
-        fontFamily: font,
-      });
-      console.log(object.fontWeight);
-
-      if (editor?.canvas?.renderAll) editor.canvas.renderAll();
-    }
-  }, [deboucedWeight]);
 
   return (
     <div>
